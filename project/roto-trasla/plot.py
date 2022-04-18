@@ -25,9 +25,10 @@ def plot_molecule(a, b, c, el):
     colors = [float(hash(i) % 256) / 256 for i in el] 
     
     
-    ax.scatter3D(a, b, c, c=colors, cmap="jet")
+    ax.scatter3D(a, b, c, c=colors, cmap="jet", s=500)
         
 #        for name in self.atoms_name:
 #            ax.scatter3D(atx,aty,atz, s=100, label=name)
-    ax.legend()
+    #ax.legend()
+    plt.show()
     #plt.savefig('iimmaaggee.png')
