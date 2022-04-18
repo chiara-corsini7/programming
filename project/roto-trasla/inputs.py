@@ -48,21 +48,37 @@ print('TRANSLATION %s in $\AA$' % modnt)
 print('ROTATION %s' % modnr)
 print('ELEMENTS %s' % el)
 print ('COORD X %s' % a)
-print ('COORD X %s' % b)
-print ('COORD X %s' % c)
+print ('COORD y %s' % b)
+print ('COORD z %s' % c)
     
 if (modnt==np.array([0.,0.,0.])).all() & (modnr==np.array([0.,0.,0.])).all():
     print('Not translating nor rotating the molecule')
 elif (modnt==np.array([0.,0.,0.])).all():
     print('Only rotating the molecule')
     a_rot, b_rot, c_rot = fc.ruota(a, b, c, modnr)
+    a = a_rot
+    b = b_rot
+    c = c_rot
 elif (modnr==np.array([0.,0.,0.])).all():
     print('Only translating the molecule')
     a_tr, b_tr, c_tr = fc.trasla(a, b, c, modnt)
+    a = a_tr
+    b = b_tr
+    c = c_tr
 else:
     print('Roto-translating the molecule')
     a_rot, b_rot, c_rot = fc.ruota(a, b, c, modnr)
     a_tr, b_tr, c_tr = fc.trasla(a_rot, b_rot, c_rot, modnt)
+    a = a_tr
+    b = b_tr
+    c = c_tr
+
+
+print ('new COORD X %s' % a)
+print ('new COORD y %s' % b)
+print ('new COORD z %s' % c)
+
+
     
 plot.plot_molecule(a, b, c, el)
     
