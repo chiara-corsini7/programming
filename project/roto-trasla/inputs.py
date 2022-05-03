@@ -28,6 +28,10 @@ parser.add_argument('-c','--clone', action='store', nargs=3,
                     help="Number of replicas in x y and z,"\
                     "default 1 1 1", default =[1,1,1], type=int,
                     metavar=('repx', 'repy', 'repz'))
+parser.add_argument('-m','--molecule', action='store', 
+                    help="Input file a free molecule (True) or bulk (False)"\
+                    "default True", default = True, type=bool,
+                    metavar=('repx', 'repy', 'repz')) 
 parser.add_argument('-v','--vectors', action='store', nargs=3, 
                     help="a b and c unit cell vectors,"\
                     "unit cell vectors of 15 Angs side greater than molecule are default", default =[0.,0.,0.], type=float,
@@ -43,12 +47,15 @@ args = parser.parse_args()
 
 #def treat_input(args):
     # retrieviebìng 
+
 modnt = np.array(args.translate)
 modnr = np.array(args.rotate)
 modnre = np.array(args.clone)
 cell_vec = np.array(args.vectors)
 cell_ang = np.array(args.angles)
+var = args.molecule
 data = np.genfromtxt(args.file, skip_header=1, dtype='str')
+
 
     
     
@@ -167,6 +174,7 @@ if file_add+new_file != args.file:
             else:
                 f.write('end', str(stampa[k]) + ' ')
 else:
+thub
     print('No changes --> nothing saved')
 
 
