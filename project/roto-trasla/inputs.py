@@ -8,6 +8,7 @@ Created on Sat Mar 19 11:12:35 2022
 
 import functions as fc
 import plot as plot
+import data as dt
 import numpy as np
 import argparse
 
@@ -28,10 +29,10 @@ parser.add_argument('-c','--clone', action='store', nargs=3,
                     help="Number of replicas in x y and z,"\
                     "default 1 1 1", default =[1,1,1], type=int,
                     metavar=('repx', 'repy', 'repz'))
-parser.add_argument('-m','--molecule', action='store', 
+parser.add_argument('-m','--molecule', action='store',
                     help="Input file a free molecule (True) or bulk (False)"\
-                    "default True", default = True, type=bool,
-                    metavar=('repx', 'repy', 'repz')) 
+                    "default True", default=True, type=bool,
+                    metavar='var') 
 parser.add_argument('-v','--vectors', action='store', nargs=3, 
                     help="a b and c unit cell vectors,"\
                     "unit cell vectors of 15 Angs side greater than molecule are default", default =[0.,0.,0.], type=float,
@@ -54,24 +55,23 @@ modnre = np.array(args.clone)
 cell_vec = np.array(args.vectors)
 cell_ang = np.array(args.angles)
 var = args.molecule
-data = np.genfromtxt(args.file, skip_header=1, dtype='str')
 
+data = np.genfromtxt(args.file, skip_header=2, dtype='str')
+
+print('AOOOOOOOOO',data)
 
     
     
-el = data[:,0]
-a = data[:,1].astype(float)
-b = data[:,2].astype(float)
-c = data[:,3].astype(float)
+
+#getting data
+el, a, b, c = dt.get_data(data)
+
 
 if (cell_vec==np.array([0.,0.,0.])).all():
-    cell_vec[0] = max(a)+15.
-    cell_vec[1] = max(b)+15.
-    cell_vec[2] = max(c)+15.
+    cell_vec = dt.build_cell(cell_vec, a, b, c)
     
     
-for i in range(len(cell_ang)):
-    cell_ang[i] *= np.pi/180
+cell_ang = dt.angle_deg(cell_ang)
 
 
     
@@ -94,7 +94,7 @@ if (modnt==np.array([0.,0.,0.])).all() & (modnr==np.array([0.,0.,0.])).all() & (
 elif (modnt==np.array([0.,0.,0.])).all() & (modnre==np.array([1, 1, 1])).all():
     print('Only rotating the molecule')
     file_add='R-'
-    a_rot, b_rot, c_rot = fc.ruota(a, b, c, modnr)
+    a_rot, b_rot, c_rot = fc.ruota(a, b, c, modnr, var)
     a = a_rot
     b = b_rot
     c = c_rot
@@ -116,7 +116,7 @@ elif (modnt==np.array([0.,0.,0.])).all() & (modnr==np.array([0.,0.,0.])).all():
 elif (modnre==np.array([1, 1, 1])).all():
     print('Roto-translating the molecule')
     file_add='R+T-'
-    a_rot, b_rot, c_rot = fc.ruota(a, b, c, modnr)
+    a_rot, b_rot, c_rot = fc.ruota(a, b, c, modnr, var)
     a_tr, b_tr, c_tr = fc.trasla(a_rot, b_rot, c_rot, modnt)
     a = a_tr
     b = b_tr
@@ -133,7 +133,7 @@ elif (modnr==np.array([0., 0., 0.])).all():
 elif (modnt==np.array([0., 0., 0.])).all():
     print('Rotating and cloning the molecule')
     file_add='R+C-'
-    a_rot, b_rot, c_rot = fc.ruota(a, b, c, modnr)
+    a_rot, b_rot, c_rot = fc.ruota(a, b, c, modnr, var)
     el_rep, a_rep, b_rep, c_rep = fc.replica(el, a_tr, b_tr, c_tr, modnre, cell_vec, cell_ang)
     el = el_rep
     a = a_rep
@@ -143,7 +143,7 @@ elif (modnt==np.array([0., 0., 0.])).all():
 else:
     print('Roto-translating and cloning the molecule')
     file_add='R+T+C-'
-    a_rot, b_rot, c_rot = fc.ruota(a, b, c, modnr)
+    a_rot, b_rot, c_rot = fc.ruota(a, b, c, modnr, var)
     a_tr, b_tr, c_tr = fc.trasla(a_rot, b_rot, c_rot, modnt)
     el_rep, a_rep, b_rep, c_rep = fc.replica(el, a_tr, b_tr, c_tr, modnre, cell_vec, cell_ang)
     el = el_rep
@@ -174,7 +174,6 @@ if file_add+new_file != args.file:
             else:
                 f.write('end', str(stampa[k]) + ' ')
 else:
-thub
     print('No changes --> nothing saved')
 
 
