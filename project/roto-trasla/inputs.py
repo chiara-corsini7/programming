@@ -58,7 +58,7 @@ var = args.molecule
 
 data = np.genfromtxt(args.file, skip_header=2, dtype='str')
 
-print('AOOOOOOOOO',data)
+
 
     
     
@@ -66,12 +66,12 @@ print('AOOOOOOOOO',data)
 #getting data
 el, a, b, c = dt.get_data(data)
 
-
+# building cell if not provided
 if (cell_vec==np.array([0.,0.,0.])).all():
     cell_vec = dt.build_cell(cell_vec, a, b, c)
     
-    
-cell_ang = dt.angle_deg(cell_ang)
+#changing angles to radians     
+cell_ang = dt.angle_rad(cell_ang)
 
 
     
@@ -86,14 +86,20 @@ print ('COORD z %s' % c)
 print ('Cell vectors %s' %cell_vec)
 print ('Cell angles %s' %cell_ang)
 
+#initializing file name
 new_file = args.file
 file_add = ''
-    
+
+
+
+#deciding what operations performed    
 if (modnt==np.array([0.,0.,0.])).all() & (modnr==np.array([0.,0.,0.])).all() & (modnre==np.array([1, 1, 1])).all():
     print('Not translating nor rotating nor cloning the molecule')
 elif (modnt==np.array([0.,0.,0.])).all() & (modnre==np.array([1, 1, 1])).all():
     print('Only rotating the molecule')
     file_add='R-'
+    #degrees to radians
+    modnr=dt.angle_rad(modnr)
     a_rot, b_rot, c_rot = fc.ruota(a, b, c, modnr, var)
     a = a_rot
     b = b_rot
@@ -116,6 +122,7 @@ elif (modnt==np.array([0.,0.,0.])).all() & (modnr==np.array([0.,0.,0.])).all():
 elif (modnre==np.array([1, 1, 1])).all():
     print('Roto-translating the molecule')
     file_add='R+T-'
+    modnr=dt.angle_rad(modnr)
     a_rot, b_rot, c_rot = fc.ruota(a, b, c, modnr, var)
     a_tr, b_tr, c_tr = fc.trasla(a_rot, b_rot, c_rot, modnt)
     a = a_tr
@@ -133,6 +140,7 @@ elif (modnr==np.array([0., 0., 0.])).all():
 elif (modnt==np.array([0., 0., 0.])).all():
     print('Rotating and cloning the molecule')
     file_add='R+C-'
+    modnr=dt.angle_rad(modnr)
     a_rot, b_rot, c_rot = fc.ruota(a, b, c, modnr, var)
     el_rep, a_rep, b_rep, c_rep = fc.replica(el, a_tr, b_tr, c_tr, modnre, cell_vec, cell_ang)
     el = el_rep
@@ -143,6 +151,7 @@ elif (modnt==np.array([0., 0., 0.])).all():
 else:
     print('Roto-translating and cloning the molecule')
     file_add='R+T+C-'
+    modnr=dt.angle_rad(modnr)
     a_rot, b_rot, c_rot = fc.ruota(a, b, c, modnr, var)
     a_tr, b_tr, c_tr = fc.trasla(a_rot, b_rot, c_rot, modnt)
     el_rep, a_rep, b_rep, c_rep = fc.replica(el, a_tr, b_tr, c_tr, modnre, cell_vec, cell_ang)
@@ -157,24 +166,37 @@ print ('new COORD y %s' % b)
 print ('new COORD z %s' % c)
 
 
-cell_vecs_x, cell_vecs_y, cell_vecs_z = fc.cell(cell_vec, cell_ang)    
-plot.plot_molecule(a, b, c, el, cell_vecs_x, cell_vecs_y, cell_vecs_z)
-    
+
+
+cell_vecs_x, cell_vecs_y, cell_vecs_z = fc.cell(cell_vec, cell_ang)  
+
 
 
 if file_add+new_file != args.file:
     f = open(file_add+new_file, 'w')
     for i in range(len(el)):
-            
+        
+        
         stampa = [el[i] , round(a[i],6) ,round(b[i],6) ,round(c[i], 6)]
-     
         for k in range(4):
             if k == 3:
-                f.write('end', str(stampa[k]) + '\n')
+                f.write(str(stampa[k]) + '\n')
             else:
-                f.write('end', str(stampa[k]) + ' ')
+                f.write(str(stampa[k]) + ' ')
 else:
     print('No changes --> nothing saved')
+
+
+
+
+
+
+  
+plot.plot_molecule(a, b, c, el, cell_vecs_x, cell_vecs_y, cell_vecs_z)
+    
+
+
+
 
 
 #print("Coordinates loaded")
