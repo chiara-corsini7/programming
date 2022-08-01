@@ -22,7 +22,7 @@ def build_cell(cell_vec,a,b,c):
     cell_vec[2] = max(c)+15.
     return(cell_vec)
 
-def angle_deg(cell_ang):
+def angle_rad(cell_ang):
     for i in range(len(cell_ang)):
         cell_ang[i] *= np.pi/180
     return(cell_ang)
