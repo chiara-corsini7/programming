@@ -59,7 +59,6 @@ var = args.molecule
 data = np.genfromtxt(args.file, skip_header=2, dtype='str')
 
 
-
     
     
 
@@ -70,9 +69,18 @@ el, a, b, c = dt.get_data(data)
 if (cell_vec==np.array([0.,0.,0.])).all():
     cell_vec = dt.build_cell(cell_vec, a, b, c)
     
+
+
+
+# if modnre[0] < 1 or modnre[1] < 1 or modnre[2] < 1:
+#     raise ValueError("Numbers of replicas values must be integers greater than one")
+# if cell_ang[0] > 180. or cell_ang[1] > 180. or cell_ang[2] > 180.:
+#     raise ValueError("Cell angles greater than 180° don't have physical sense")
+# if cell_ang[0] < 0. or cell_ang[1] < 0. or cell_ang[2] > 0.:
+#     raise ValueError("Cell angles greater than 180° don't have physical sense")
+    
 #changing angles to radians     
 cell_ang = dt.angle_rad(cell_ang)
-
 
     
 print('Selected file: %s' % args.file)
