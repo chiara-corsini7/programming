@@ -150,7 +150,7 @@ elif (modnt==np.array([0., 0., 0.])).all():
     file_add='R+C-'
     modnr=dt.angle_rad(modnr)
     a_rot, b_rot, c_rot = fc.ruota(a, b, c, modnr, var)
-    el_rep, a_rep, b_rep, c_rep = fc.replica(el, a_tr, b_tr, c_tr, modnre, cell_vec, cell_ang)
+    el_rep, a_rep, b_rep, c_rep = fc.replica(el, a_rot, b_rot, c_rot, modnre, cell_vec, cell_ang)
     el = el_rep
     a = a_rep
     b = b_rep
@@ -182,6 +182,8 @@ cell_vecs_x, cell_vecs_y, cell_vecs_z = fc.cell(cell_vec, cell_ang)
 
 if file_add+new_file != args.file:
     f = open(file_add+new_file, 'w')
+    f.write(str(len(el)) + '\n')
+    f.write('\n')
     for i in range(len(el)):
         
         
