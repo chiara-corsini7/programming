@@ -11,6 +11,7 @@ import glob
 import functions as fc
 import data as dt
 import numpy as np
+import CustomError as CE
 
 def pytest_generate_tests(metafunc):
     """Generating parameters for tests"""
@@ -50,6 +51,7 @@ def retreive_data(fileName):
 #                                    np.array([0., 0., 0.])])
 @pytest.mark.parametrize('var', [True, False])
 
+# @pytest.mark.skip
 
 def test_trasla_ruota(retreive_data, modnt, angle, var):
     
@@ -82,6 +84,8 @@ def test_trasla_ruota(retreive_data, modnt, angle, var):
 # @pytest.mark.parametrize('modnre', [np.array([2, 2, 3])])#,
 #                                     #np.array([2, 4, 5])])       
 # @pytest.mark.skip
+# @pytest.mark.skip
+
 def test_trasla_replica(retreive_data, modnt, cell_vec, cell_ang, modnre):
     
     try:
@@ -98,9 +102,52 @@ def test_trasla_replica(retreive_data, modnt, cell_vec, cell_ang, modnre):
         np.testing.assert_array_almost_equal(b_rep_tr, b_tr_rep)
         np.testing.assert_array_almost_equal(c_rep_tr, c_tr_rep)
 
-    except ValueError:
+    except CE.NumbersOfReplicas:
         pytest.xfail('ValueError')
         pass
+    except CE.SystemException:
+        pytest.xfail('Exception')
+        pass
+    
+# @pytest.mark.parametrize('modnt', [np.array([10., 100., -20.]), 
+#                                     np.array([120., -1526243., 0.763536272])])
+def test_trasla_inv(retreive_data, modnt):
+    
+    
+    el, a_test, b_test, c_test = retreive_data
+    
+    modnt_inv = - modnt
+    
+    a_tr, b_tr, c_tr = fc.trasla(a_test, b_test, c_test, modnt)
+    
+    a_out, b_out, c_out = fc.trasla(a_tr, b_tr, c_tr, modnt_inv)
+    
+    np.testing.assert_array_almost_equal(a_out, a_test)
+    np.testing.assert_array_almost_equal(b_out, b_test)
+    np.testing.assert_array_almost_equal(c_out, c_test)
+    
+
+# @pytest.mark.parametrize('angle', [np.array([90., 90., 90.]), 
+#                                     np.array([120., -1526243., 0.763536272])])
+@pytest.mark.parametrize('var', [True, False])
+def test_ruota_inv(retreive_data, var, angle):
+    
+    el, a_test, b_test, c_test = retreive_data
+    angle_rad = dt.angle_rad(angle)
+    angle_inv = - angle
+    angle_rad_inv = dt.angle_rad(angle_inv)
+    
+    
+    a_rot, b_rot, c_rot = fc.ruota(a_test, b_test, c_test, angle_rad, var)
+    
+    
+    a_out1, b_out1, c_out1 = fc.ruota(a_rot, b_rot, c_rot, np.array([angle_rad_inv[0], 0., 0.]), var)
+    a_out2, b_out2, c_out2 = fc.ruota(a_out1, b_out1, c_out1, np.array([0., angle_rad_inv[1], 0.]), var)
+    a_out, b_out, c_out = fc.ruota(a_out2, b_out2, c_out2, np.array([0., 0., angle_rad_inv[2]]), var)
+    
+    np.testing.assert_array_almost_equal(a_out, a_test)
+    np.testing.assert_array_almost_equal(b_out, b_test)
+    np.testing.assert_array_almost_equal(c_out, c_test)
 
  
 
