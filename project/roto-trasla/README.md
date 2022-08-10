@@ -96,6 +96,15 @@ The project is devided between different files
 
 All test functions are built using pytest as a testing tool. Input .xyz files are automatically taken from the [test-file/](./test-file) repository, while input parameters are randomly generated.
 
+## Run the program
+
+Before downloading the program make sure to have the following depenedencies installed
+- <tt>numpy 1.21.2</tt>
+- <tt>matplotlib 3.5.1</tt>
+- <tt>pytest 6.2.5</tt>
+- <tt>argparse 1.1</tt>
+- <tt> glob </tt>
+
 
 
 
