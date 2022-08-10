@@ -11,6 +11,7 @@ import plot as plot
 import data as dt
 import numpy as np
 import argparse
+import os
 
 # getting input from bash through ArgumentParser class of argparse
 
@@ -24,7 +25,7 @@ parser.add_argument('file', action='store',
 # getting translations in angstrom
 
 parser.add_argument('-t','--translate', action='store', nargs=3, 
-                    help=r"x y and z coordinates of translation vector in $\AA$,"\
+                    help=r"x y and z coordinates of translation vector,"\
                     " default 0. 0. 0.", default = [0.,0.,0.], type=float,
                     metavar=('dx', 'dy', 'dz'))
 
@@ -46,22 +47,22 @@ parser.add_argument('-c','--clone', action='store', nargs=3,
     
 parser.add_argument('-m','--molecule', action='store',
                     help="Input file a free molecule (True) or bulk (False)"\
-                    "default True", default=True, type=bool,
+                    "default, var==True", default=True, type=bool,
                     metavar='var') 
     
 # getting unit cell vectors    
     
 parser.add_argument('-v','--vectors', action='store', nargs=3, 
                     help="a b and c unit cell vectors,"\
-                    "unit cell vectors of 15 Angs side greater than molecule are default", default =[0.,0.,0.], type=float,
+                    "unit cell vectors of 15 units side greater than molecule are default", default =[0.,0.,0.], type=float,
                     metavar=('a', 'b', 'c'))
     
 # getting unit cell angles
     
 parser.add_argument('-a','--angles', action='store', nargs=3, 
-                    help="$\alpha$ $\beta$ and $\gamma$ unit cell angles in degrees,"\
+                    help="α β and γ unit cell angles in degrees,"\
                     "orthorombic cell is default (90. 90. 90.)", default =[90.,90.,90.], type=float,
-                    metavar=('$\alpha$', '$\beta$', '$\gamma$'))
+                    metavar=('α', 'β', 'γ'))
         
 args = parser.parse_args()
 
@@ -74,6 +75,12 @@ modnre = np.array(args.clone)
 cell_vec = np.array(args.vectors)
 cell_ang = np.array(args.angles)
 var = args.molecule
+path, old_file = os.path.split(args.file)
+
+if path == '':
+    path = path
+else:
+    path = path+'/'
 
 data = np.genfromtxt(args.file, skip_header=2, dtype='str')
 
@@ -94,7 +101,8 @@ if (cell_vec==np.array([0.,0.,0.])).all():
 cell_ang = dt.angle_rad(cell_ang)
 
 # Printing input info
-  
+ 
+print('\n') 
 print('Selected file: %s' % args.file)
 print('TRANSLATION %s in $\AA$' % modnt)
 print('ROTATION %s' % modnr)
@@ -105,9 +113,11 @@ print ('COORD y %s' % b)
 print ('COORD z %s' % c)
 print ('Cell vectors %s' %cell_vec)
 print ('Cell angles %s' %cell_ang)
+print('\n')
+
 
 # initializing new file name
-new_file = args.file
+new_file = old_file
 file_add = ''
 
 
@@ -227,17 +237,19 @@ else:
 
 # Printing output info
 
+print('\n')
 print ('new elements %s' % el)
 print ('new COORD X %s' % a)
 print ('new COORD y %s' % b)
 print ('new COORD z %s' % c)
-
+print('\n')
 
 
 # Printing output file
 
-if file_add+new_file != args.file:
-    f = open(file_add+new_file, 'w')
+if file_add+new_file != old_file:
+
+    f = open(path+file_add+new_file, 'w')  
     f.write(str(len(el)) + '\n')
     f.write('\n')
     for i in range(len(el)):
@@ -249,6 +261,8 @@ if file_add+new_file != args.file:
                 f.write(str(stampa[k]) + '\n')
             else:
                 f.write(str(stampa[k]) + ' ')
+                
+    print('New coordinates saved in '+path+file_add+new_file)            
 else:
     print('No changes --> nothing saved')
 
