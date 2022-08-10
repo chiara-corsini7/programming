@@ -13,4 +13,4 @@ class NumbersOfReplicas(ValueError):
     """ ValueError for number of replicas """
 
 class CellAngle(ValueError):
-    """ ValueError for call angle """
+    """ ValueError for cell angle """
