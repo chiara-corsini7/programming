@@ -94,7 +94,7 @@ The project is devided between different files
 
 - **`test_comm.py`:** contains test functions to evaluate commutative and inverse properties of all the functions contained in **`functions.py`**. <tt>test_trasla_ruota</tt> and <tt>test_trasla_replica</tt> test the commutability of translation and rotation and of translation and cloning.  Rotation and cloning do not commute. <tt>test_trasla_inv</tt> and <tt>test_ruota_inv</tt> test the inverse property of translation and rotation, cloning is not inversible. Finally, <tt>test_ruota_xyz</tt> tests that applying the non basic $R$ matrix gives the same result as applying the tree besic matrices $R_z$, $R_y$ and $R_x$ in the correct order.
 
-All test functions are built using pytest as a testing tool. Input .xyz files are automatically taken from the [test-file/](./test-file) repository, while input parameters are randomly generated.
+All test functions are built using pytest as a testing tool. Input .xyz files are automatically taken from the [test-file/](.[/test-file](https://github.com/chiara-corsini7/programming/project/roto-trasla/test-file/) repository, while input parameters are randomly generated.
 
 ## Run the program
 
@@ -103,10 +103,60 @@ Before downloading the program make sure to have the following depenedencies ins
 - <tt>matplotlib 3.5.1</tt>
 - <tt>pytest 6.2.5</tt>
 - <tt>argparse 1.1</tt>
-- <tt> glob </tt>
 
+To clone the repository type on your local bash
 
+```bash
+git clone https://github.com/chiara-corsini7/programming.git
+```
+Then go into the roto-trasla directory
 
+```bash
+cd programming/project/roto-trasla
+```
 
+### Input
 
+To run the program, an <i>.xyz</i> file has to be provided. The <i>.xyz</i> file is a positional argument, so it is manadtory for the program to run. If it is not in the current directory the path to the <i>.xyz</i> file has to be specified
 
+```bash
+python roto-trasla.py /path_to_file/file.xyz
+```
+if no optional arguments are provided the structure contained in the <i>.xyz</i> file will be simply plotted on the screen and no transformation will be performed. By adding optional arguments the user can perform the wanted transformation on the systems, as in the following example
+
+```bash
+python roto-trasla.py /path_to_file/file.xyz -t 10. 10. 10.
+```
+In this case the coordinates of the atoms contained in the <i>.xyz</i> file will be translated by 10 units on the x, y and z direction. Several transformation can be performed by adding multiple flags and the respective parameters. The flags and  the optional parameters are
+
+- <tt>-t dx dy dz</tt> for translation
+- <tt>-r rotx roty rotz</tt> for rotations, rotx, roty and rotz are angles in degrees 
+- <tt>-c repx repy rep</tt> for cloning, repx, repy and repz are number of repetitions in x, y and z and cannot be smaller than one
+- <tt>-m var</tt> for rotation of free molecule, if <tt>-m True</tt> the rotation is performed on the molecular axis if <tt>-m False</tt> the rotation is perfomed on the x, y and z axes of the systems
+- <tt>-v a b c</tt> for the cell vectors
+- <tt>-a α β γ</tt> for the cell angles in degrees
+- <tt>-h</tt> for printing the help message
+
+In the help message all flags and corresponding parameter values are listed together with the default values. Default values for translation, rotation aand cloning are <tt>(0., 0., 0.)</tt>, <tt>(0., 0., 0.)</tt> and <tt>(1, 1, 1)</tt>, respectively, in order not to perform any transformation on the system. The default value for the rotation of the free molecule is <tt>True</tt>. In case no cell vector or cell angle is provided an orthorombic unit cell vectors with the sides 15 units greater than molecule, is the default.
+
+### Output
+
+If no optional arguments are provided the structure contained in the <i>.xyz</i> file will be simply plotted on the screen and no transformation will be performed. The 3D plot will show the system and the respective unit cell. The atoms are represented by dots and are colored based on the element provided in the <i>.xyz</i> file. If transformations are performed, the plot will show the transformed system. A new <i>.xyz</i> file will be saved in the directory of the original one and will be named based on the operations perfomed. For example, after the translation
+```bash
+python roto-trasla.py /path_to_file/file.xyz -t 10. 10. 10.
+```
+a file named <tt>/path_to_file/T-file.xyz</tt> will be generated in which the translated coordinates are saved.
+
+## Tutorial
+
+This tutorial will show how <tt>roto-trasla.py</tt> can be used to generate a graphite surface and a CO<sub>2</sub> molecule can be placed on it. All the files required to perform this tutorial can be found in the [tutorial/] repository.
+
+### Creating the graphite surface
+
+Graphite is a crystalline form of the element carbon which consists of stacked layers of graphene. Graphene can be represented via a hexagonal supercell and two non equivalent carbon atoms **A** and **B** as shown in the following picture.
+
+<p  align="center">
+ <img src="./images/graphene-geom.png" width="50%" height="50%">
+</p>
+
+Since we will be considering as a repeating unit an hexagonal cell the coordinates of the atoms have to be expressed in a  
