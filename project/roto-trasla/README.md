@@ -3,7 +3,7 @@
 
 ## Rotations
 
-A rotation in three dimensions can be expressed through several formalisms as a mathematical transformation. A basic rotation is a rotation about one of the axes of a coordinate system. Basic rotations along the $x$, $y$ or $z$ axis of the Cartesian coordinate systems can be represented by a 3 x 3 matrix, which multiplied to a vector perform the wanted rotations. Following the right-hand rule, counter clockwise rotations are expressed along the $x$, $y$ and $z$ axes with three matrices
+A rotation in three dimensions can be expressed through several formalisms as a mathematical transformation [[1]](#1). A basic rotation is a rotation about one of the axes of a coordinate system. Basic rotations along the $x$, $y$ or $z$ axis of the Cartesian coordinate systems can be represented by a 3 x 3 matrix, which multiplied to a vector perform the wanted rotations. Following the right-hand rule, counter clockwise rotations are expressed along the $x$, $y$ and $z$ axes with three matrices
 
 <p  align="center">
  <img src="./images/rot-mat.png" width="80%" height="80%">
@@ -11,11 +11,13 @@ A rotation in three dimensions can be expressed through several formalisms as a 
 
 
 with $\pmb{\hat{x}},\pmb{\hat{y}},\pmb{\hat{z}}$ being the axes of the rotation and $\theta_{x},\theta_{y},\theta_{z}$ the angles of rotation in the different directions.
-Other rotation matrices can be obtained from these three using matrix multiplication. For example, the product
+Other rotation matrices can be obtained from these three using matrix multiplication. 
 
+<p  align="center">
+ <img src="./images/general-matrix.png" width="10%" height="10%">
+</p>
 
-
-The order of rotation operations is from right to left; the matrix adjacent to the column vector is the first to be applied, in this case along $\pmb{\hat{z}}$, and then the others. In general matrix multiplication is not commutative therefore attention must be paid when trying to invert rotations.
+The order of rotation operations is from right to left; the matrix adjacent to the vector is the first to be applied, in this case along $\pmb{\hat{z}}$, and then the others. Usually, matrix multiplication is not commutative therefore attention must be paid when trying to invert rotations.
 The rotated coordinates are obtained via matrix multiplication
 
 <p  align="center">
@@ -23,7 +25,7 @@ The rotated coordinates are obtained via matrix multiplication
 </p>
 
 where $\pmb{v_i}$ is the vector of the coordinates of the $i^{th}$ atom and $N$ is the number of atoms.
-In this general case the axis of rotation for each matrix lies on the fixed axis that lies along the respective unit vector $\pmb{\hat{n}}$. In many cases the molecules are not found in the center of the system, meaning that a general rotation along $\pmb{\hat{x}},\pmb{\hat{y}}$ and $\pmb{\hat{z}}$ also causes a displacement of the molecule inside the cell. To rotate free molecules it is necessary to define the axis of rotation of each molecule and perform the rotationa along that axis. This process requires a thorough analysis of the molecular geometry and it is hard to generalize. Therefore, it is possible to perform a fictitious rotation along the central axis of the molecule just by generally rotating the molecule along the $x$, $y$ and $z$ axes of the system and then relocating it in its original position by
+In this general case the axis of rotation for each matrix lies on the fixed axis that lies along the respective unit vector $\pmb{\hat{n}}$. In many cases the molecules are not found in the center of the system, meaning that a general rotation along $\pmb{\hat{x}},\pmb{\hat{y}}$ and $\pmb{\hat{z}}$ also causes a displacement of the molecule. To rotate free molecules it is necessary to define the axis of rotation of each molecule and perform the rotationa along that axis. This process requires a thorough analysis of the molecular geometry and it is hard to generalize. Therefore, it is possible to perform a fictitious rotation along the central axis of the molecule just by generally rotating the molecule along the $x$, $y$ and $z$ axes of the system and then relocating it in its original position by
 
 <p  align="center">
  <img src="./images/ruota-rip.png" width="40%" height="40%">
@@ -42,11 +44,11 @@ To perform translations the process is straightforward. The translated coordinat
  <img src="./images/trasla.png" width="25%" height="25%">
 </p>
 
-where $x_{i_{tra}}$ and $x_{i}$ are the new and original $x$ coordinate of the $i^{th}$ atom, respectively.and $N$ is the number of atoms. The same also applies to the $y$ and $z$ coordinates.
+where $x_{i_{tra}}$ and $x_{i}$ are the new and original $x$ coordinate of the $i^{th}$ atom, respectively and $N$ is the number of atoms. The same also applies to the $y$ and $z$ coordinates.
 
 ## Cloning and Supercell
 
-The system can be easily cloned or replicated along each direction by defining a supercell. This is very useful in system containing bulks or surfaces, whose crystal structure can be described by means of a unit cell. The unit cell is a repeating unit formed by the vectors spanning the points of a lattice. For the same system multiple unit cells can be defined and a larger system can be obtained just by replicating the unit cell for the wanted amount.
+The system can be easily cloned or replicated along each direction by defining a supercell. This is very useful in system containing bulks or surfaces, whose crystal structure can be described by means of a unit cell [[2]](#2). The unit cell is a repeating unit formed by the vectors spanning the points of a lattice. For the same system multiple unit cells can be defined and a larger system can be obtained just by replicating the unit cell for the wanted amount.
 Any three-dimensional supercell can be defined via three cell vectors $a$, $b$ and $c$ and three cell angles $\alpha$, $\beta$ and $\gamma$. Via different values of cell vectors and angles all conventional primitive cells can be derived
 
 <p  align="center">
@@ -61,7 +63,20 @@ The supercell can be represented in matrix form
 
 
 
-where $(c_{11}, c_{12}, c_{13})$, $(c_{21}, c_{22}, c_{23})$ and $(c_{31}, c_{32}, c_{33})$ are the $x$, $y$ and $z$ components of the cell. From here, the cloning values can be constructed 
+where $(c_{11}, c_{12}, c_{13})$, $(c_{21}, c_{22}, c_{23})$ and $(c_{31}, c_{32}, c_{33})$ are the $x$, $y$ and $z$ components of the cell. In the case of an orthorombic cell the matrix is simply
+
+<p  align="center">
+ <img src="./images/cell-orthorombic.png" width="15%" height="15%">
+</p>
+
+Instead for a triclinic cell
+
+<p  align="center">
+ <img src="./images/cell-trigonal.png" width="55%" height="55%">
+</p>
+
+
+From here, the cloning values can be constructed 
 
 <p  align="center">
  <img src="./images/replica-values.png" width="60%" height="60%">
@@ -84,7 +99,7 @@ The project is devided between different files
 
 - **`data.py`:** contains functions that manipulate data and return it in the needed form. The function <tt>get_data</tt> creates the vectors containing elements and coordinates from data file. The function <tt>build_cell</tt> builds the default cell vectors in case no cell vectors are entered from input. The function <tt>angle_rad</tt> turns angles in degrees to radians.
 
-- **`plot.py`:** plots the output coordinates and cell. Through the function <tt>plot_cell</tt> the faces of the cell are onstructed and then plotted together with the atoms, through their coordinates, by the function <tt>plot_molecule</tt>.
+- **`plot.py`:** plots the output coordinates and cell. Through the function <tt>plot_cell</tt> the faces of the cell are constructed and then plotted together with the atoms, through their coordinates, by the function <tt>plot_molecule</tt>.
 
 - **`roto-trasla.py`:** contains the main part of the code. It is used to collect data from the command line and/or assign default values, print info on screen, call the functions in the file  **`functions.py`** to perform the requested transformations, write the output file containing the transformed system and call the plotting function to visualize the transformed system.
 
@@ -94,7 +109,7 @@ The project is devided between different files
 
 - **`test_comm.py`:** contains test functions to evaluate commutative and inverse properties of all the functions contained in **`functions.py`**. <tt>test_trasla_ruota</tt> and <tt>test_trasla_replica</tt> test the commutability of translation and rotation and of translation and cloning.  Rotation and cloning do not commute. <tt>test_trasla_inv</tt> and <tt>test_ruota_inv</tt> test the inverse property of translation and rotation, cloning is not inversible. Finally, <tt>test_ruota_xyz</tt> tests that applying the non basic $R$ matrix gives the same result as applying the tree besic matrices $R_z$, $R_y$ and $R_x$ in the correct order.
 
-All test functions are built using pytest as a testing tool. Input .xyz files are automatically taken from the [test-file/](.[/test-file](https://github.com/chiara-corsini7/programming/project/roto-trasla/test-file/) repository, while input parameters are randomly generated.
+All test functions are built using pytest as a testing tool. Input .xyz files are automatically taken from the [test-files/](https://github.com/chiara-corsini7/programming/tree/main/project/roto-trasla/test-files) repository, while input parameters are randomly generated.
 
 ## Run the program
 
@@ -137,7 +152,7 @@ In this case the coordinates of the atoms contained in the <i>.xyz</i> file will
 - <tt>-a α β γ</tt> for the cell angles in degrees
 - <tt>-h</tt> for printing the help message
 
-In the help message all flags and corresponding parameter values are listed together with the default values. Default values for translation, rotation aand cloning are <tt>(0., 0., 0.)</tt>, <tt>(0., 0., 0.)</tt> and <tt>(1, 1, 1)</tt>, respectively, in order not to perform any transformation on the system. The default value for the rotation of the free molecule is <tt>True</tt>. In case no cell vector or cell angle is provided an orthorombic unit cell vectors with the sides 15 units greater than molecule, is the default.
+In the help message all flags and corresponding parameter values are listed together with the default values. Default values for translation, rotation and cloning are <tt>(0., 0., 0.)</tt>, <tt>(0., 0., 0.)</tt> and <tt>(1, 1, 1)</tt>, respectively, in order not to perform any transformation on the system. The default value for the rotation of the free molecule is <tt>True</tt>. In case no cell vector or cell angle is provided, an orthorombic unit cell vectors with the sides 15 units greater than molecule is the default.
 
 ### Output
 
@@ -149,7 +164,7 @@ a file named <tt>/path_to_file/T-file.xyz</tt> will be generated in which the tr
 
 ## Tutorial
 
-This tutorial will show how <tt>roto-trasla.py</tt> can be used to generate a graphite surface and a CO<sub>2</sub> molecule can be placed on it. All the files required to perform this tutorial can be found in the [tutorial/] repository.
+This tutorial will show how <tt>roto-trasla.py</tt> can be used to generate a graphite surface and a CO<sub>2</sub> molecule can be placed on it. All the files required to perform this tutorial can be found in the [tutorial/](https://github.com/chiara-corsini7/programming/tree/main/project/roto-trasla/tutorial) repository.
 
 ### Creating the graphite surface
 
@@ -164,7 +179,9 @@ Since we will be considering as a repeating unit an hexagonal cell, to correctly
 - <tt>a = a, b = a, c = 10 Å</tt>
 - <tt>α = 90°, β = 90°, γ = 120°</tt>
 
-where a is the cell parameter and it is <tt>a = 2.464 Å</tt>. By replicating the coordinates in the $x$ and $y$ direction of the wanted amount we will obtain a graphene sheet. The create graphite we have to shift that same graphene sheet by  <tt>dx = a/2, dy = a(√3/6), dz = 3.34 Å</tt> and unite it to the previous graphene sheet. Doing this we will have obtained a 2 layer graphite surface.
+where a is the cell parameter and it is <tt>a = 2.464 Å</tt>. By replicating the coordinates in the $x$ and $y$ direction of the wanted amount we will obtain a graphene sheet. 
+
+To create graphite, we have to shift that same graphene sheet by  <tt>dx = a/2, dy = a(√3/6), dz = 3.34 Å</tt> and unite it to the previous graphene sheet. Doing this we will have obtained a 2 layer graphite surface.
 
 
 To start creating the graphene layer make sure to be in the roto-trasla/ directory
@@ -178,7 +195,7 @@ Then it is time to replicate the graphene.xyz file to make a 3 x 3 graphene laye
 ```bash
 python roto-trasla.py tutorial/graphene.xyz -v 2.464 2.464 10. -a 90. 90. 120. -c 3 3 1 
 ```
-A new file named <tt>C-graphene.xyz</tt> will be created in the tutorial/ directory. This file can be renamed
+A new file named <tt>C-graphene.xyz</tt> will be created in the <tt>tutorial/</tt> directory. This file can be renamed
 
 ```bash
 mv tutorial/C-graphene.xyz /tutorial/first-layer.xyz
@@ -199,7 +216,7 @@ The coordinates of the carbon atom of the first layer, contained in the file <tt
 cat tutorial/first-layer.xyz
 ```
 
-and pasted at the end of the file <tt>tutorial/graphite.xyz</tt> using any text editor and remember to also modify the number of atoms at the beginning of the <i>.xyz</i> file from 18 to 36, using vim
+and pasted at the end of the file <tt>tutorial/graphite.xyz</tt> using any text editor. Remember to also modify the number of atoms at the beginning of the <i>.xyz</i> file from 18 to 36. Using vim
 
 ```bash
 vi tutorial/graphite.xyz
@@ -218,7 +235,7 @@ The graphite surface is constructed!
 
 ### Positioning the CO<sub>2</sub> molecule
 
-CO<sub>2</sub> is a linear molecule composed by two atoms of oxygen connected by a central carbon atom. The C--O distance is of <tt>1.16 Å</tt>, making the <i>.xyz</i> file very easy, as shown in CO2.xyz. To position the molecule with the carbon atom on top of one of the carbon atoms of graphene and the oxygen atoms along the diagonal of the hexagonal cell it has to be translated by <tt>dx = 2.464 Å, dy = 2.843887 Å, dz = 6.5 Å</tt> and rotated by 30° along z respect to its molecular axis. 
+CO<sub>2</sub> is a linear molecule composed by two atoms of oxygen connected by a central carbon atom. The C--O distance is of <tt>1.16 Å</tt>, making the <i>.xyz</i> file very easy, as shown in <tt>CO2.xyz</tt>. To position the molecule with the carbon atom on top of one of the carbon atoms of graphene and the oxygen atoms along the diagonal of the hexagonal cell it has to be translated by <tt>dx = 2.464 Å, dy = 2.843887 Å, dz = 6.5 Å</tt> and rotated by 30° along z respect to its molecular axis. 
 
 This is easily done by tiping
 
@@ -234,7 +251,7 @@ cp tutorial/graphite.xyz tutorial/graphite+CO2.xyz
 copying the roto-translated coordinates of CO<sub>2</sub> after printing them on the bash
 
 ```bash
-cat tutorial/first-layer.xyz
+cat tutorial/R+T-CO2.xyz
 ```
 and pasting them at the end of the file <tt>tutorial/graphite+CO2.xyz</tt> with any text editor, reminding to change the atom number at the beginning of the file from 36 to 39. Using vim 
 
@@ -254,6 +271,12 @@ python roto-trasla.py tutorial/graphite+CO2.xyz -v 7.392 7.392 10. -a 90. 90. 12
 
 The system is set!
 
+# References
+
+<a id="1">[1]</a> 
+Heard, W. B. (2006). Rigid body mechanics: Mathematics, physics and applications. Weinheim: Wiley-VCH. 
 
 
+<a id="2">[2]</a> 
+Ashcroft, N. W., Mermin, N. D. (1976). Solid State Physics. Holt-Saunders.
 
