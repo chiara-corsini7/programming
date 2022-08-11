@@ -210,6 +210,10 @@ after this is done the system can be visualized by using any molecule visualizer
 ```bash
 python roto-trasla.py tutorial/graphite.xyz -v 7.392 7.392 10. -a 90. 90. 120.
 ```
+<p  align="center">
+ <img src="./images/graphite-out.png" width="60%" height="60%">
+</p>
+
 The graphite surface is constructed!
 
 ### Positioning the CO<sub>2</sub> molecule
@@ -242,6 +246,12 @@ The system can be visualized by using any molecule visualizer (Avogadro, XCrySDe
 ```bash
 python roto-trasla.py tutorial/graphite+CO2.xyz -v 7.392 7.392 10. -a 90. 90. 120.
 ```
+
+
+<p  align="center">
+ <img src="./images/graphite+co2_out.png" width="60%" height="60%">
+</p>
+
 The system is set!
 
 
