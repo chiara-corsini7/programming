@@ -159,4 +159,91 @@ Graphite is a crystalline form of the element carbon which consists of stacked l
  <img src="./images/graphene-geom.png" width="50%" height="50%">
 </p>
 
-Since we will be considering as a repeating unit an hexagonal cell the coordinates of the atoms have to be expressed in a  
+Since we will be considering as a repeating unit an hexagonal cell, to correctly replicate the coordinates of the atoms they have to be expressed in "hexagonal coordinates". The atoms will be positioned in <tt>A = (0., 0., 0.)</tt> and <tt>B = (a<sub>0</sub>(√3/2), a<sub>0</sub>/2, 0.) = (a/2, a/2√3, 0.)</tt>, as expressed in graphene.xyz. The cell will be defined by the following cell vectors and angles
+
+- <tt>a = a, b = a, c = 10 Å</tt>
+- <tt>α = 90°, β = 90°, γ = 120°</tt>
+
+where a is the cell parameter and it is <tt>a = 2.464 Å</tt>. By replicating the coordinates in the $x$ and $y$ direction of the wanted amount we will obtain a graphene sheet. The create graphite we have to shift that same graphene sheet by  <tt>dx = a/2, dy = a(√3/6), dz = 3.34 Å</tt> and unite it to the previous graphene sheet. Doing this we will have obtained a 2 layer graphite surface.
+
+
+To start creating the graphene layer make sure to be in the roto-trasla/ directory
+
+```bash
+cd programming/project/roto-trasla
+```
+
+Then it is time to replicate the graphene.xyz file to make a 3 x 3 graphene layer by typing
+
+```bash
+python roto-trasla.py tutorial/graphene.xyz -v 2.464 2.464 10. -a 90. 90. 120. -c 3 3 1 
+```
+A new file named <tt>C-graphene.xyz</tt> will be created in the tutorial/ directory. This file can be renamed
+
+```bash
+mv tutorial/C-graphene.xyz /tutorial/first-layer.xyz
+```
+This file can be translated to create the second layer of graphene that will make up the graphite surface
+
+```bash
+python roto-trasla.py tutorial/first-layer.xyz -t 1.232 0.71 3.34
+```
+The newly created file can be renamed
+
+```bash
+mv tutorial/T-first-layer.xyz /tutorial/graphite.xyz
+```
+The coordinates of the carbon atom of the first layer, contained in the file <tt>tutorial/first-layer.xyz</tt>, can be copied after printing them on the bash
+
+```bash
+cat tutorial/first-layer.xyz
+```
+
+and pasted at the end of the file <tt>tutorial/graphite.xyz</tt> using any text editor and remember to also modify the number of atoms at the beginning of the <i>.xyz</i> file from 18 to 36, using vim
+
+```bash
+vi tutorial/graphite.xyz
+```
+
+after this is done the system can be visualized by using any molecule visualizer (Avogadro, XCrySDen, VMD ...), or just by typing
+
+```bash
+python roto-trasla.py tutorial/graphite.xyz -v 7.392 7.392 10. -a 90. 90. 120.
+```
+The graphite surface is constructed!
+
+### Positioning the CO<sub>2</sub> molecule
+
+CO<sub>2</sub> is a linear molecule composed by two atoms of oxygen connected by a central carbon atom. The C--O distance is of <tt>1.16 Å</tt>, making the <i>.xyz</i> file very easy, as shown in CO2.xyz. To position the molecule with the carbon atom on top of one of the carbon atoms of graphene and the oxygen atoms along the diagonal of the hexagonal cell it has to be translated by <tt>dx = 2.464 Å, dy = 2.843887 Å, dz = 6.5 Å</tt> and rotated by 30° along z respect to its molecular axis. 
+
+This is easily done by tiping
+
+```bash
+python roto-trasla.py tutorial/CO2.xyz -t 2.464 2.843887 6.5 -r 0. 0. 30.
+```
+
+we can construct the final file by
+
+```bash
+cp tutorial/graphite.xyz tutorial/graphite+CO2.xyz
+```
+copying the roto-translated coordinates of CO<sub>2</sub> after printing them on the bash
+
+```bash
+cat tutorial/first-layer.xyz
+```
+and pasting them at the end of the file <tt>tutorial/graphite+CO2.xyz</tt> with any text editor, reminding to change the atom number at the beginning of the file from 36 to 39. Using vim 
+
+```bash
+vi tutorial/graphite+CO2.xyz
+```
+The system can be visualized by using any molecule visualizer (Avogadro, XCrySDen, VMD ...), or just by typing
+
+```bash
+python roto-trasla.py tutorial/graphite+CO2.xyz -v 7.392 7.392 10. -a 90. 90. 120.
+```
+The system is set!
+
+
+
+
