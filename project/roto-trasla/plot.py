@@ -80,7 +80,7 @@ def plot_molecule(a, b, c, el, cell_vecs_x, cell_vecs_y, cell_vecs_z):
     
     # plotting atoms
     
-    ax.scatter3D(a, b, c, c=colors, cmap="jet", s=300, depthshade=False)
+    ax.scatter3D(a, b, c, c=colors, cmap="jet", s=300)
         
 
     plt.show()
