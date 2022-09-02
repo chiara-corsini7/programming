@@ -13,6 +13,10 @@ import numpy as np
 import argparse
 import os
 
+########################################################################
+              ############## GETTING INPUT #############
+#########################################################################              
+              
 # getting input from bash through ArgumentParser class of argparse
 
 parser = argparse.ArgumentParser(description='Translate Rotate and Clone molecular coordinates.')
@@ -22,7 +26,7 @@ parser = argparse.ArgumentParser(description='Translate Rotate and Clone molecul
 parser.add_argument('file', action='store', 
                     help=".xyz file with coordinates",  type=str)
 
-# getting translations in angstrom
+# getting translations 
 
 parser.add_argument('-t','--translate', action='store', nargs=3, 
                     help=r"x y and z coordinates of translation vector,"\
@@ -67,6 +71,11 @@ parser.add_argument('-a','--angles', action='store', nargs=3,
 args = parser.parse_args()
 
 
+########################################################################
+              ############## ASSIGNING VARIABLES #############
+######################################################################### 
+
+
 # assigning arguments to variables 
 
 modnt = np.array(args.translate)
@@ -94,17 +103,22 @@ el, a, b, c = dt.get_data(data)
 if (cell_vec==np.array([0.,0.,0.])).all():
     cell_vec = dt.build_cell(cell_vec, a, b, c)
     
-
     
 # changing angles to radians  
    
 cell_ang = dt.angle_rad(cell_ang)
 
+
+
+########################################################################
+              ############## PRINTING INPUT #############
+######################################################################### 
+
 # Printing input info
  
 print('\n') 
 print('Selected file: %s' % args.file)
-print('TRANSLATION %s in $\AA$' % modnt)
+print('TRANSLATION %s' % modnt)
 print('ROTATION %s' % modnr)
 print('REPLICAS %s' % modnre)
 print('ELEMENTS %s' % el)
@@ -119,6 +133,12 @@ print('\n')
 # initializing new file name
 new_file = old_file
 file_add = ''
+
+
+########################################################################
+        ############## PERFORMING TRANSFORMATIONS #############
+######################################################################### 
+
 
 
 
@@ -233,6 +253,13 @@ else:
     a = a_rep
     b = b_rep
     c = c_rep
+
+
+
+
+########################################################################
+              ############## PRINTING OUTPUT #############
+######################################################################### 
 
 
 # Printing output info
