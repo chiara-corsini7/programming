@@ -198,7 +198,7 @@ python roto-trasla.py tutorial/graphene.xyz -v 2.464 2.464 10. -a 90. 90. 120. -
 A new file named <tt>C-graphene.xyz</tt> will be created in the <tt>tutorial/</tt> directory. This file can be renamed
 
 ```bash
-mv tutorial/C-graphene.xyz /tutorial/first-layer.xyz
+mv tutorial/C-graphene.xyz tutorial/first-layer.xyz
 ```
 This file can be translated to create the second layer of graphene that will make up the graphite surface
 
@@ -208,7 +208,7 @@ python roto-trasla.py tutorial/first-layer.xyz -t 1.232 0.71 3.34
 The newly created file can be renamed
 
 ```bash
-mv tutorial/T-first-layer.xyz /tutorial/graphite.xyz
+mv tutorial/T-first-layer.xyz tutorial/graphite.xyz
 ```
 The coordinates of the carbon atom of the first layer, contained in the file <tt>tutorial/first-layer.xyz</tt>, can be copied after printing them on the bash
 
