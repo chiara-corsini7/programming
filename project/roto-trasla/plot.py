@@ -48,7 +48,7 @@ def plot_cell(cell_vecs_x, cell_vecs_y, cell_vecs_z):
     verts=np.array(verts)
     return(verts)
 
-def plot_molecule(a, b, c, el, cell_vecs_x, cell_vecs_y, cell_vecs_z):
+def plot_molecule(a, b, c, el, cell_vecs_x, cell_vecs_y, cell_vecs_z, file_name):
     """This function plots the cell and the atoms form output
         
     Parameters:
@@ -83,4 +83,4 @@ def plot_molecule(a, b, c, el, cell_vecs_x, cell_vecs_y, cell_vecs_z):
     ax.scatter3D(a, b, c, c=colors, cmap="jet", s=300)
         
 
-    plt.show()
+    plt.savefig(file_name, dpi=300)
