@@ -67,6 +67,11 @@ parser.add_argument('-a','--angles', action='store', nargs=3,
                     help="α β and γ unit cell angles in degrees,"\
                     "orthorombic cell is default (90. 90. 90.)", default =[90.,90.,90.], type=float,
                     metavar=('α', 'β', 'γ'))
+    
+    
+    
+parser.add_argument('-i', '--image', action='store_true', 
+    help="saves image of the system")
         
 args = parser.parse_args()
 
@@ -139,6 +144,16 @@ file_add = ''
         ############## PERFORMING TRANSFORMATIONS #############
 ######################################################################### 
 
+translate = True
+rotate = True
+clone = True
+
+if (modnt==np.array([0.,0.,0.])).all(): 
+    translate = False
+if (modnr==np.array([0.,0.,0.])).all(): 
+    rotate = False
+if (modnre==np.array([1, 1, 1])).all(): 
+    clone = False
 
 
 
@@ -146,12 +161,12 @@ file_add = ''
 
 # No operations
    
-if (modnt==np.array([0.,0.,0.])).all() & (modnr==np.array([0.,0.,0.])).all() & (modnre==np.array([1, 1, 1])).all():
+if translate == False and rotate == False and clone == False:
     print('Not translating nor rotating nor cloning the molecule')
-    
+
 # Rotation
     
-elif (modnt==np.array([0.,0.,0.])).all() & (modnre==np.array([1, 1, 1])).all():
+elif translate == False and clone == False:
     print('Only rotating the molecule')
     file_add='R-'
     
@@ -166,7 +181,7 @@ elif (modnt==np.array([0.,0.,0.])).all() & (modnre==np.array([1, 1, 1])).all():
     
 # Translation
     
-elif (modnr==np.array([0.,0.,0.])).all() & (modnre==np.array([1, 1, 1])).all():
+elif rotate ==  False and clone == False:
     print('Only translating the molecule')
     file_add='T-'
     
@@ -178,7 +193,7 @@ elif (modnr==np.array([0.,0.,0.])).all() & (modnre==np.array([1, 1, 1])).all():
     
 # Clonation
         
-elif (modnt==np.array([0.,0.,0.])).all() & (modnr==np.array([0.,0.,0.])).all():
+elif translate == False and rotate == False:
     print('Only cloning the molecule')
     file_add='C-'
     
@@ -191,7 +206,7 @@ elif (modnt==np.array([0.,0.,0.])).all() & (modnr==np.array([0.,0.,0.])).all():
     
 # Rotation + Translation
         
-elif (modnre==np.array([1, 1, 1])).all():
+elif clone == False:
     print('Roto-translating the molecule')
     file_add='R+T-'
     
@@ -207,7 +222,7 @@ elif (modnre==np.array([1, 1, 1])).all():
     
 # Translation + Clonation
         
-elif (modnr==np.array([0., 0., 0.])).all():
+elif rotate == False:
     print('Translating and cloning the molecule')
     file_add='T+C-'
     
@@ -221,7 +236,7 @@ elif (modnr==np.array([0., 0., 0.])).all():
     
 # Rotation + Clonation
         
-elif (modnt==np.array([0., 0., 0.])).all():
+elif translate == False:
     print('Rotating and cloning the molecule')
     file_add='R+C-'
     
@@ -274,32 +289,35 @@ print('\n')
 
 # Printing output file
 
+
+
 if file_add+new_file != old_file:
 
-    f = open(path+file_add+new_file, 'w')  
-    f.write(str(len(el)) + '\n')
-    f.write('\n')
+    print('########################################')
+    print('########## NEW .xyz FILE ###############')
+    print('########################################')
+
+    print('\n')
+    print(len(el),'\n')
+
+
     for i in range(len(el)):
-        
-        
-        stampa = [el[i] , round(a[i],6) ,round(b[i],6) ,round(c[i], 6)]
-        for k in range(4):
-            if k == 3:
-                f.write(str(stampa[k]) + '\n')
-            else:
-                f.write(str(stampa[k]) + ' ')
-                
-    print('New coordinates saved in '+path+file_add+new_file)            
+        print(el[i] , round(a[i],6) ,round(b[i],6) ,round(c[i], 6))
+    
+    print('\n')     
+      
 else:
-    print('No changes --> nothing saved')
+    print('No changes --> nothing printed')
 
 
 # Plotting output
 
-
-cell_vecs_x, cell_vecs_y, cell_vecs_z = fc.cell(cell_vec, cell_ang)    
-plot.plot_molecule(a, b, c, el, cell_vecs_x, cell_vecs_y, cell_vecs_z)
-    
+if args.image:
+    file_name = file_add+new_file 
+    file_name = file_name.replace('.xyz', '.png')
+    cell_vecs_x, cell_vecs_y, cell_vecs_z = fc.cell(cell_vec, cell_ang)    
+    plot.plot_molecule(a, b, c, el, cell_vecs_x, cell_vecs_y, cell_vecs_z, file_name)
+    print('Image saved in', file_name)
 
 
 
