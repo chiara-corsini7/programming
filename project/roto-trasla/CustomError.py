@@ -6,8 +6,8 @@ Created on Sun Aug  7 09:50:25 2022
 @author: chiaracorsini
 """
 
-class SystemException(Exception):
-    """ Exception for too many atoms in the system """
+class SystemTooBig(ValueError):
+    """ ValueError for too many atoms in the system """
     
 class NumbersOfReplicas(ValueError):
     """ ValueError for number of replicas """
