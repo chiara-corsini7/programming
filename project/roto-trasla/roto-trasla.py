@@ -313,7 +313,7 @@ else:
 # Plotting output
 
 if args.image:
-    file_name = file_add+new_file 
+    file_name = path+file_add+new_file 
     file_name = file_name.replace('.xyz', '.png')
     cell_vecs_x, cell_vecs_y, cell_vecs_z = fc.cell(cell_vec, cell_ang)    
     plot.plot_molecule(a, b, c, el, cell_vecs_x, cell_vecs_y, cell_vecs_z, file_name)
