@@ -31,7 +31,10 @@ def get_data(data):
     return(el, a, b, c)
 
 def build_cell(cell_vec,a,b,c):
-    """This function builds the default cell vectors in case no cell vectors are entered
+    """This function builds the default cell vectors in case no cell vectors are entered.
+       A cell is always necessary in case cloning is perfomed, without it the program would crash.
+       A fictitious cell orthorombic cell greater than the molecule of 15 units is the default
+       which can be change from input by providing different cell vectors with the flag -v.
     
     Parameters:
          cell_vec: 3x1 zeros float array 
@@ -40,7 +43,7 @@ def build_cell(cell_vec,a,b,c):
          c: float array of z coordinates
         
     Returns: 
-        3x1 float array containing cell vectors 15 Angs greater than molecule
+        3x1 float array containing cell vectors 15 units greater than molecule
         """ 
     
     cell_vec[0] = max(a)+15.
