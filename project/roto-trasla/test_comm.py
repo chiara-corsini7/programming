@@ -12,36 +12,23 @@ import functions as fc
 import data as dt
 import numpy as np
 import CustomError as CE
+import hypothesis.extra.numpy 
+from hypothesis import given, strategies as st
+
+#############################################################
+###############   GENERATING DATA   #########################
+#############################################################
+
 
 def pytest_generate_tests(metafunc):
-    """Generating parameters for tests:
-        -> List of .xyz test files
-        -> Random 3x1 float array with angles for rotations
-        -> Random 3x1 float array with vector for rtranslations
-        -> Random 3x1 float array with cell vectors
-        -> Random 3x1 float array with cell angles [0,180)
-        -> Random 3x1 positive integer array with number of replicas 
+    """Generating parameters for tests
+       Returns: List of .xyz test files
     """
     
     if "fileName" in metafunc.fixturenames:
         filelist = glob.glob('test-files/*.xyz')
         metafunc.parametrize("fileName", filelist )
-    if "angle" in metafunc.fixturenames:
-        rd_angle = np.random.uniform(-360.,360., 3)
-        metafunc.parametrize('angle', [rd_angle])
-    if "modnt" in metafunc.fixturenames:
-        rd_modnt = np.random.uniform(-100000.,100000., 3)
-        metafunc.parametrize('modnt', [rd_modnt])
-    if "cell_vec" in metafunc.fixturenames:
-        rd_cell_vec = np.random.uniform(-10.,100., 3)
-        metafunc.parametrize('cell_vec', [rd_cell_vec])
-    if "cell_ang" in metafunc.fixturenames:
-        rd_cell_ang = np.random.uniform(0.,180., 3)
-        metafunc.parametrize('cell_ang', [rd_cell_ang])
-    if "modnre"  in metafunc.fixturenames:
-        rd_modnre = np.random.randint(1, 3, 3)
-        metafunc.parametrize('modnre', [rd_modnre])
-        
+      
 @pytest.fixture  
 def retreive_data(fileName):
     """Get data from .xyz files"""
@@ -53,9 +40,50 @@ def retreive_data(fileName):
     return(el, a, b, c)
 
 
+def trasla_given(func):
+    """Generates given hypotesis fixture for translations
+       Returns: 3x1 numpy array of floats for translations
+    """
+    modnt=hypothesis.extra.numpy.arrays(float, 3, elements=st.floats(-10000, +1000))
+    return given(modnt)(func)
 
-@pytest.mark.parametrize('var', [True, False])
-def test_trasla_ruota(retreive_data, modnt, angle, var):
+def angle_given(func):
+    """Generates given hypotesis fixture for angle
+       Returns: 3x1 numpy array angles in degrees (0,360)
+    """
+    angle=hypothesis.extra.numpy.arrays(float, 3, elements=st.floats(0, 360))
+    return given(angle)(func)
+
+
+def trasla_ruota_given(func):
+    """Generates given hypotesis fixture for translations and rotations
+       Returns: --> 3x1 numpy array of floats for translations
+                --> 3x1 numpy array of floats for angles in degrees (0,360)
+    """
+    modnt=hypothesis.extra.numpy.arrays(float, 3, elements=st.floats(-10000, +1000))
+    angle=hypothesis.extra.numpy.arrays(float, 3, elements=st.floats(0, 360))
+    return given(modnt,angle)(func)
+
+def trasla_replica_given(func):
+    """Generates given hypotesis fixture for translations and replicas
+       Returns: --> 3x1 numpy array of floats for translations
+                --> 3x1 numpy array of integers
+                --> 3x1 numpy array angles (1, 180°) for cell angles
+                --> 3x1 numpy array cell vectors (1, 100) units
+    """
+    modnt=hypothesis.extra.numpy.arrays(float, 3, elements=st.floats(-10000, +1000))
+    modnre=hypothesis.extra.numpy.arrays(int, 3, elements=st.integers(1, 10))
+    cell_vec=hypothesis.extra.numpy.arrays(float, 3, elements=st.floats(1, 100))
+    cell_ang=hypothesis.extra.numpy.arrays(float, 3, elements=st.floats(1, 180))
+    return given(modnt, cell_vec, cell_ang, modnre)(func)
+
+#############################################################
+###############   PERFORMING TESTS   ########################
+#############################################################
+
+@trasla_ruota_given
+@pytest.mark.parametrize('var', [True])
+def test_trasla_ruota(retreive_data, var, modnt, angle):
     """
     GIVEN: Test .xyz files and random translation vector modnt and rotation angles and var==True
     
@@ -66,34 +94,30 @@ def test_trasla_ruota(retreive_data, modnt, angle, var):
     """
     
     
-    if var == True:
         
-        # GIVEN
+    # GIVEN
         
-        el_iniz, a_iniz, b_iniz, c_iniz = retreive_data
-        angle_rad = dt.angle_rad(angle)
+    el_iniz, a_iniz, b_iniz, c_iniz = retreive_data
+    angle_rad = dt.angle_rad(angle)
         
-        # WHEN
+    # WHEN
         
-        a_rot, b_rot, c_rot = fc.ruota(a_iniz, b_iniz, c_iniz, angle_rad, var)
-        a_tr, b_tr, c_tr = fc.trasla(a_iniz, b_iniz, c_iniz, modnt)
+    a_rot, b_rot, c_rot = fc.ruota(a_iniz, b_iniz, c_iniz, angle_rad, var)
+    a_tr, b_tr, c_tr = fc.trasla(a_iniz, b_iniz, c_iniz, modnt)
     
-        a_tr_rot, b_tr_rot, c_tr_rot = fc.ruota(a_tr, b_tr, c_tr, angle_rad, var)
-        a_rot_tr, b_rot_tr, c_rot_tr = fc.trasla(a_rot, b_rot, c_rot, modnt)
+    a_tr_rot, b_tr_rot, c_tr_rot = fc.ruota(a_tr, b_tr, c_tr, angle_rad, var)
+    a_rot_tr, b_rot_tr, c_rot_tr = fc.trasla(a_rot, b_rot, c_rot, modnt)
         
-        #THEN
+    #THEN
         
-        np.testing.assert_array_almost_equal(a_rot_tr, a_tr_rot)
-        np.testing.assert_array_almost_equal(b_rot_tr, b_tr_rot)
-        np.testing.assert_array_almost_equal(c_rot_tr, c_tr_rot)
+    np.testing.assert_array_almost_equal(a_rot_tr, a_tr_rot)
+    np.testing.assert_array_almost_equal(b_rot_tr, b_tr_rot)
+    np.testing.assert_array_almost_equal(c_rot_tr, c_tr_rot)
         
-    # skipping test for var==False since makes ruota not to commute
-    else:
-        pytest.skip("When not free molecule rot and translation are not commutative")
 
 
 
-
+@trasla_replica_given
 def test_trasla_replica(retreive_data, modnt, cell_vec, cell_ang, modnre):
     
     """
@@ -136,6 +160,7 @@ def test_trasla_replica(retreive_data, modnt, cell_vec, cell_ang, modnre):
         pass
     
 
+@trasla_given
 def test_trasla_inv(retreive_data, modnt):
     """
     GIVEN: Test .xyz files and random translation vector modnt and its inverse -modnt
@@ -164,7 +189,7 @@ def test_trasla_inv(retreive_data, modnt):
     np.testing.assert_array_almost_equal(c_out, c_test)
     
 
-
+@angle_given
 @pytest.mark.parametrize('var', [True, False])
 def test_ruota_inv(retreive_data, var, angle):
     """
@@ -198,7 +223,8 @@ def test_ruota_inv(retreive_data, var, angle):
     np.testing.assert_array_almost_equal(a_out, a_test)
     np.testing.assert_array_almost_equal(b_out, b_test)
     np.testing.assert_array_almost_equal(c_out, c_test)
-    
+
+@angle_given    
 @pytest.mark.parametrize('var', [True, False])
 def test_ruota_xyz(retreive_data, var, angle):
     """
